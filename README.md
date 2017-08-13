@@ -14,9 +14,6 @@ Todo:
 4. RFID :
     - Build work Flow
 
-
-
-
 ## Hardware:
 
  - Slider -
@@ -80,6 +77,5 @@ A short snippet describing the license (MIT, Apache, etc.)
 
 ## face tokens and face sets
 
-1. Benjamin - faceToken : 903b55f8d327991a237e6299901ff9a4
-   Ronak - faceToken : "0d53fa386b22690ffd24c706b91f03d4"
-2. faceSet - outer_id -1
+1.
+2.
