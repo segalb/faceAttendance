@@ -32,7 +32,7 @@ let classesSchema = Schema({
   faceSet: Number,
   term: String,
   year: String,
-  Students: [
+  students: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Student'
@@ -48,11 +48,11 @@ let classesSchema = Schema({
 
 let lecturesSchema = Schema({
   // _id: Number,
-  lecture: {
-    type: Schema.Types.ObjectId,
-    ref: 'lectures'
-  },
-  Students: [
+  // lecture: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'lectures'
+  // },
+  students: [
     {
       student: {
         type: Schema.Types.ObjectId,

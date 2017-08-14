@@ -30,7 +30,7 @@ class App extends React.Component {
       liveView: "null",
       searchTime: "3",
       term: 'Fall',
-      class: '6.002',
+      class: '597b6f386a14a22e7cd0a6d7',
       date: new Date().toISOString(),
       studentsList: [
         {
@@ -47,14 +47,25 @@ class App extends React.Component {
           text: 'Dummy Data 1',
           face_token: '',
           avatar: ''
-        }
-      ]
+        },
+      ],
+      classes:[]
     };
     this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
     _this = this;
+
+//Scale change this id to the professor id !!!!!!
+//after sign in save the info on this page!! professor id
+
+    axios.post("/classInfo", {id: '597b5e12a1537a32985322cc'}).then(function(response) {
+      _this.setState({classes: response.data});
+    }).catch(function(error) {
+      console.log(error);
+    });
+
     var camSocket = io.connect("http://localhost:3000/cam0");
 
     //deal with printing video
@@ -204,13 +215,14 @@ class App extends React.Component {
   }
 
   handleCloseModal() {
-    console.log("here2");
+    console.log("here2",this.state.classbb);
     this.setState({dialogOpen: false});
     axios.post("/startAnalysis", {
       term: this.state.term,
       class: this.state.class,
       date: this.state.date,
-      searchTime: this.state.searchTime
+      searchTime: this.state.searchTime,
+      classId: this.state.class
     }).then(function(response) {
       console.log("there is response", response);
     }).catch(function(error) {
@@ -266,7 +278,7 @@ class App extends React.Component {
 
           <LeftDrawer navDrawerOpen={navDrawerOpen} menus={Data.menus} username="User Admin"/>
 
-          <Dialog title="Start a new sub class" actions={[< FlatButton label = "Start Scan" onTouchTap = {
+        <Dialog title="Start a Lecture" actions={[< FlatButton label = "Start Scan" onClick = {
               (e) => this.handleCloseModal(e)
             } />]} modal={false} open={this.state.dialogOpen} onRequestClose={(e) => this.handleCloseModal(e)}>
             Please choose info before scan
@@ -278,9 +290,9 @@ class App extends React.Component {
             <DatePicker hintText="Date Picker" defaultDate ={new Date()} onChange={this.handleChangeModalDate.bind(this)}/>
             <SelectField floatingLabelText="Class" value={this.state.class} fullWidth={true} onChange={this.handleChangeModal.bind(this)}>
               {/* TODO: take class from DB */}
-              <MenuItem key={0} value='6.002' primaryText="6.002"/>
-              <MenuItem key={1} value='b' primaryText="b"/>
-              <MenuItem key={2} value='c' primaryText="c"/>
+              {this.state.classes.map((item,i) =>{
+                return( <MenuItem key={i} value={item._id} primaryText={item.name} />)
+              })}
             </SelectField>
             <TextField name="SearchTime" hintText="Time for search in min" floatingLabelText="Time for search" fullWidth={true} value={this.state.searchTime} onChange={this.handleChangeModalTime.bind(this)}/>
           </Dialog>

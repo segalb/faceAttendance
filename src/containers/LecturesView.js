@@ -65,15 +65,15 @@ class LecturesView extends React.Component {
         let tmpArr = [];
         tmpArr.push(item._id);
         tmpArr.push(_this.dateFormatter(item.date));
-        tmpArr.push(item.Students.length);
+        tmpArr.push(item.students.length);
         let counter = 0;
-        item.Students.forEach(item2 => {
+        item.students.forEach(item2 => {
           if (item2.attendance === 1) {
             counter++;
           }
         });
         tmpArr.push(counter);
-        tmpArr = tmpArr.concat(item.Students);
+        tmpArr = tmpArr.concat(item.students);
         console.log("temp Arr at ", i, tmpArr);
         arr.push(tmpArr);
       });

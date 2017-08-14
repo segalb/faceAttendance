@@ -74,22 +74,33 @@ app.post('/startAnalysis', (req, res) => {
   console.log("form is working", req.body);
   startImgAnalysis = true; //scalability use redis - true false redis with camera id
   //TODO: add set time out for starting time analysis
-  Classes.findOne({
-    name: req.body.class
-  }, function(err, classTmp) {
+  Classes.findById(req.body.class, function(err, classTmp) {
     if (!classTmp) {
       console.log("class not found");
       return;
     } else {
-      console.log("this is class info", classTmp)
+      console.log("this is class info", classTmp);
+      console.log("classTmp students", classTmp.students)
+      let tmpArr = classTmp.students.map((item) => {
+        return {
+          student: item,
+          attendance:0
+          }
+      })
+      console.log("tmp array is ", tmpArr);
       API_KEY_FACESET_OUTRERID = classTmp.faceSet; // assign new faceSet group to search within
-      var newLecture = new Lectures({class: classTmp._id, Student: [], date: req.body.date});
+      var newLecture = new Lectures({ students: tmpArr, date: req.body.date});
       newLecture.save(function(err, lectureTmp) {
         if (err) {
           console.log(err);
         } else {
           console.log(lectureTmp);
           currentSubClassID = lectureTmp._id; //cahnge for saclability send for local storage
+
+          //push to class the specific lecture
+
+
+          //
           res.sendStatus(200);
         }
       });
@@ -143,8 +154,9 @@ app.post('/classLecture', function(req, res) {
     if (err) {
       console.log(err)
     }
+    console.log("lecture is",lecture);
     Lectures.populate(lecture.lectures, {
-      path: 'Students.student',
+      path: 'students.student',
       model: 'Student'
     }, function(err, result) {
       if (err) {
