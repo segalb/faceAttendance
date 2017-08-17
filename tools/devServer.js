@@ -89,7 +89,7 @@ app.post('/startAnalysis', (req, res) => {
       })
       console.log("tmp array is ", tmpArr);
       API_KEY_FACESET_OUTRERID = classTmp.faceSet; // assign new faceSet group to search within
-      var newLecture = new Lectures({ students: tmpArr, date: req.body.date, req.body.name});
+      var newLecture = new Lectures({ students: tmpArr, date: req.body.date,name: req.body.name});
       newLecture.save(function(err, lectureTmp) {
         if (err) {
           console.log(err);
