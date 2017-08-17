@@ -34,6 +34,7 @@ class App extends React.Component {
       currentLecture: '123',
       date: new Date().toISOString(),
       totalStudents:30,
+      lectureName:'deafult',
       studentsList: [
         {
           id: 0,
@@ -203,6 +204,12 @@ class App extends React.Component {
     this.setState({class: value});
   }
 
+  handleChangeModalLectureName(event, data, value) {
+    // this.handleCustomClick('class', event, data, value);
+    console.log('here for name , data,value ', data, value)
+    this.setState({lectureName: data});
+  }
+
   handleChangeModalTerm(event, data, value) {
     console.log('term', data, value)
     this.setState({term: value});
@@ -224,7 +231,8 @@ class App extends React.Component {
       class: this.state.class,
       date: this.state.date,
       searchTime: this.state.searchTime,
-      classId: this.state.class
+      classId: this.state.class,
+      name:this.state.lectureName
     }).then(function(response) {
       console.log("there is response hhhh", response);
       console.log(response.data);
@@ -299,6 +307,9 @@ console.log(_this.state.currentLecture,_this.state.class);
               (e) => this.handleCloseModal(e)
             } />]} modal={false} open={this.state.dialogOpen} onRequestClose={(e) => this.handleCloseModal(e)}>
             Please choose info before scan
+
+            <TextField value={this.state.lectureName} onChange={this.handleChangeModalLectureName.bind(this)} />
+
             <SelectField floatingLabelText="Term" value={this.state.term} fullWidth={true} onChange={this.handleChangeModalTerm.bind(this)}>
               <MenuItem key={0} value='Fall' primaryText="Fall"/>
               <MenuItem key={1} value='Spring' primaryText="Spring"/>
