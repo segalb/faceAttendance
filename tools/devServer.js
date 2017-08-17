@@ -214,6 +214,8 @@ io.on('connection', socket => {
     return stream;
   });
 
+  //demo
+
   cams.forEach(function(camStream, i) {
     var ns = io.of('/cam' + i);
     ns.on('connection', function(wsocket) {
