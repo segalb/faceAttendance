@@ -12,7 +12,7 @@ import {grey400, cyan600, white,blueGrey500} from 'material-ui/styles/colors';
 import {typography} from 'material-ui/styles';
 import Wallpaper from 'material-ui/svg-icons/device/wallpaper';
 
-const RecentlyProducts = (props) => {
+const StudentListComponent = (props) => {
 
   const styles = {
     subheader: {
@@ -49,9 +49,9 @@ const RecentlyProducts = (props) => {
   );
 };
 
-RecentlyProducts.propTypes = {
+StudentListComponent.propTypes = {
   data: PropTypes.array,
   name: PropTypes.string
 };
 
-export default RecentlyProducts;
+export default StudentListComponent;

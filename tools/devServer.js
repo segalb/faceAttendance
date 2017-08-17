@@ -335,17 +335,6 @@ io.on('connection', socket => {
         //
         // })
 
-        // var d = gm(buf, "output.jpg").crop(640, 480, 259, 147);
-        // gm(buf, 'image.jpg').crop(145, 145, 259, 147).toBuffer('jpg', function(err, buffer) {
-        //   console.log(buffer);
-        //   wsocket.emit('data', buffer);
-        // })
-
-        // gmToBuffer(d).then(function(buffer) {
-        //   // console.log(buffer);
-        //
-        // })
-
         currentFrame = data;
 
         var base64data = new Buffer(data).toString('base64');
@@ -388,11 +377,6 @@ io.on('connection', socket => {
             console.log(tmp.faces);
 
             if (tmp.faces) {
-              // console.log("im here")
-              // if(tmp.faces.length===0){
-              //   var fs = require('fs');
-              //   fs.writeFile('./camera/frames/camera-screenshot_' + Date.now() + '.jpg ', data);
-              // }
 
               tmp.faces.forEach((item, i) => {
                 facesArr.push({
@@ -451,34 +435,6 @@ io.on('connection', socket => {
                                 lecture.save();
                                 }
                               });
-
-                              // Lectures.findByIdAndUpdate(currentSubClassID, {
-                              //   // $addToSet: {
-                              //   //   "Students": findTmp[0]._id
-                              //   // }
-                              //   // $addToSet: {
-                              //   //   "students": {
-                              //   //     student: findTmp[0]._id,
-                              //   //     attendance:1
-                              //   //     }
-                              //   // }
-                              //   'students.student' : { '$ne': findTmp[0]._id}
-                              // }, {
-                              //   // safe: true,
-                              //   // upsert: true,
-                              //   // new: true
-                              //   'students': { '$push': {
-                              //       student: findTmp[0]._id,
-                              //       attendance:1
-                              //       } }
-                              // }, function(err, tmp) {
-                              //   if (err) {
-                              //     console.log(err);
-                              //   } else {
-                              //     console.log(tmp);
-                              //   }
-                              // });
-                              // //
                             }
 
                           }
@@ -488,77 +444,8 @@ io.on('connection', socket => {
                         console.log("user is not in db add him to non users", item.face_token);
                         //TODO: add the avatar thing by croping the image to the specific size
 
-                        // console.log(item)
-                        // console.log("data", data)
-
-                        //super important small faces
-                        // gm(data, 'image.jpg').crop((item.face_rectangle.width + 250), (item.face_rectangle.height + 250), (item.face_rectangle.left - 150), (item.face_rectangle.top - 200)).resize('150', '150').toBuffer('jpg', function(err, buffer) {
-                        //   console.log(buffer);
-                        //   wsocket.emit('data', buffer);
-                        // })
-
                         console.log(currentFrame);
                         console.log("faces array is", facesArr);
-
-                        ///super to work with Jay
-                        // if (currentFrame.sourceBuffer) {
-                        //   console.log("got in");
-                        //   currentFrame.toBuffer('jpg', function(err, buffer) {
-                        //     currentFrame = buffer;
-                        //     currentFrame = gm(currentFrame, 'image.jpg').fill("none").stroke("blue", 7).drawRectangle(item.face_rectangle.left, item.face_rectangle.top, (item.face_rectangle.left + item.face_rectangle.width), (item.face_rectangle.top + item.face_rectangle.height)).toBuffer('jpg', function(err, buffer) {
-                        //       console.log("second in", buffer);
-                        //       currentFrame = buffer;
-                        //       // var base64Suare = new Buffer(buffer).toString('base64');
-                        //       if (i === tmp.faces.length - 1) {
-                        //         console.log("i, faces", i, tmp.faces.length);
-                        //         var base64Suare1 = currentFrame.toString('base64');
-                        //         wsocket.emit('data', base64Suare1);
-                        //
-                        //         // gm(currentFrame, 'image.jpg').resize('640', '480').toBuffer('jpg', function(err, buffer) {
-                        //         //   console.log(buffer);
-                        //         //   var base64Suare = new Buffer(buffer).toString('base64');
-                        //         //
-                        //         // });
-                        //       }
-                        //
-                        //     });
-                        //   });
-                        // } else {
-                        //   currentFrame = gm(currentFrame, 'image.jpg').fill("none").stroke("blue", 7).drawRectangle(item.face_rectangle.left, item.face_rectangle.top, (item.face_rectangle.left + item.face_rectangle.width), (item.face_rectangle.top + item.face_rectangle.height)).toBuffer('jpg', function(err, buffer) {
-                        //     console.log(buffer);
-                        //     currentFrame = buffer;
-                        //     // var base64Suare = new Buffer(buffer).toString('base64');
-                        //     if (i === tmp.faces.length - 1) {
-                        //       console.log("i, faces", i, tmp.faces.length);
-                        //       var base64Suare1 = currentFrame.toString('base64');
-                        //       wsocket.emit('data', base64Suare1);
-                        //
-                        //       // gm(currentFrame, 'image.jpg').resize('640', '480').toBuffer('jpg', function(err, buffer) {
-                        //       //   console.log(buffer);
-                        //       //   var base64Suare = new Buffer(buffer).toString('base64');
-                        //       //
-                        //       // });
-                        //     }
-                        //
-                        //   });
-                        // }
-
-                        ///super to work with jay
-
-                        // gmToBuffer(currentFrame).then(function(buffer) {
-                        //   currentFrame = buffer;
-                        //   if (i === tmp.faces.length - 1) {
-                        //     console.log("i, faces", i, tmp.faces.length);
-                        //     var base64Suare1 = currentFrame.toString('base64');
-                        //     wsocket.emit('data', base64Suare1);
-                        //
-                        //     // gm(currentFrame, 'image.jpg').resize('640', '480').toBuffer('jpg', function(err, buffer) {
-                        //     //   console.log(buffer);
-                        //     //   var base64Suare = new Buffer(buffer).toString('base64');
-                        //     //
-                        //     // });
-                        //   }
-                        // })
 
                         console.log(currentFrame);
                         console.log("faces array is", facesArr);
