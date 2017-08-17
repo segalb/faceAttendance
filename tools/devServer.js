@@ -9,10 +9,10 @@ var mongoose = require('mongoose');
 
 var connect = process.env.MONGODB_URI;
 
-var API_URL = 'https://api-us.faceplusplus.com/facepp/v3/';
-var API_KEY = 'IvsaIHnBvfx8sdLPqFM8AhG0DNioM38H';
-var API_SECRET = 'kaASBGw6DS94MZgFmzSZ87weSQDyi-kC';
-let API_KEY_FACESET_OUTRERID = '1';
+global.API_URL = 'https://api-us.faceplusplus.com/facepp/v3/';
+global.API_KEY = 'IvsaIHnBvfx8sdLPqFM8AhG0DNioM38H';
+global.API_SECRET = 'kaASBGw6DS94MZgFmzSZ87weSQDyi-kC';
+global.API_KEY_FACESET_OUTRERID = '1';
 var x = 0;
 let startImgAnalysis = false;
 let currentSubClassID = '';
@@ -123,77 +123,6 @@ app.post('/startAnalysis', (req, res) => {
   });
 });
 
-//////
-app.post('/signup', function(req, res) {
-  let newUser = new User({
-    fname: req.body.fname,
-    lname: req.body.lname,
-    face_tokens: [req.body.face_token],
-    image: req.body.image
-  });
-  newUser.save(function(err, user) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(user);
-
-      //add face to face++ data set
-      request.post({
-        url: API_URL + 'faceset/addface',
-        form: {
-          'api_key': API_KEY,
-          'api_secret': API_SECRET,
-          'face_tokens': req.body.face_token,
-          'outer_id': '1'
-        }
-      }, function(error, response, body) {
-        console.log("Added face to horizones face set");
-        console.log('body', body);
-        res.sendStatus(200);
-      });
-      if(req.body.class){
-        var user_id = mongoose.Types.ObjectId(user._id);
-
-        Classes.findByIdAndUpdate(req.body.class, {
-          $push: {
-            "students": user_id
-          }
-        }, {
-          safe: true,
-          upsert: true,
-          new: true
-        }, function(err, classTemp) {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log(classTemp);
-          }
-        });
-
-        //
-        Lectures.findByIdAndUpdate(req.body.lecture, {
-          $push: {
-            "students": {
-              student: user_id,
-              attendance:1
-              }
-          }
-        }, {
-          safe: true,
-          upsert: true,
-          new: true
-        }, function(err, classTemp) {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('succes',classTemp);
-          }
-        });
-      }
-
-    }
-  });
-});
 
 //api calls for info population Think of moving to routes.js
 app.post('/classInfo/', function(req, res) {

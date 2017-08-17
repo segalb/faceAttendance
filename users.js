@@ -5,6 +5,8 @@ var User = models.User;
 var Professor = models.Professor;
 var Classes = models.Classes;
 var SubClass = models.SubClass;
+let Lectures = models.Lectures;
+var request = require('request');
 
 //Manage DB Writes
 
@@ -83,7 +85,80 @@ router.post('/addClass', function(req, res) {
 router.get('/login', function(req, res) {
   console.log("login")
   res.render('login');
-})
+});
+
+
+router.post('/signup', function(req, res) {
+  let newUser = new User({
+    fname: req.body.fname,
+    lname: req.body.lname,
+    face_tokens: [req.body.face_token],
+    image: req.body.image
+  });
+  newUser.save(function(err, user) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(user);
+
+      //add face to face++ data set
+      request.post({
+        url: global.API_URL + 'faceset/addface',
+        form: {
+          'api_key': global.API_KEY,
+          'api_secret': global.API_SECRET,
+          'face_tokens': req.body.face_token,
+          'outer_id': '1'
+        }
+      }, function(error, response,body) {
+        console.log("Added face to horizones face set");
+        console.log('body', body);
+        res.sendStatus(200);
+      });
+      if(req.body.class){
+        var user_id = mongoose.Types.ObjectId(user._id);
+
+        Classes.findByIdAndUpdate(req.body.class, {
+          $push: {
+            "students": user_id
+          }
+        }, {
+          safe: true,
+          upsert: true,
+          new: true
+        }, function(err, classTemp) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(classTemp);
+          }
+        });
+
+        //
+        Lectures.findByIdAndUpdate(req.body.lecture, {
+          $push: {
+            "students": {
+              student: user_id,
+              attendance:1
+              }
+          }
+        }, {
+          safe: true,
+          upsert: true,
+          new: true
+        }, function(err, classTemp) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log('succes',classTemp);
+          }
+        });
+      }
+    }
+  });
+});
+
+
 
 // router.get('/auth/spotify', passport.authenticate('spotify', {scope: ['user-read-email', 'user-read-private', 'user-modify-playback-state', 'user-read-playback-state'] }));
 //
