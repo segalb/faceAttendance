@@ -7,7 +7,7 @@ import Face from 'material-ui/svg-icons/action/face';
 import InfoBox from '../components/dashboard/InfoBox';
 //import NewOrders from '../components/dashboard/NewOrders';
 //import MonthlySales from '../components/dashboard/MonthlySales';
-import BrowserUsage from '../components/dashboard/BrowserUsage';
+import RealTimeVideoContainer from '../components/dashboard/RealTimeVideoContainer';
 import StaticImage from '../components/dashboard/StaticImage';
 import RecentlyProducts from '../components/dashboard/RecentlyProducts';
 import UnRecognizedStudent from '../components/dashboard/UnRecognizedStudent';
@@ -31,11 +31,10 @@ const DashboardPage = (props) => {
       <div className="row">
 
         <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 m-b-15 ">
-          <BrowserUsage data={Data.dashBoardPage.browserUsage} info={props.refLiveView}/>
+          <RealTimeVideoContainer data={Data.dashBoardPage.browserUsage} info={props.refLiveView}/>
         </div>
 
         <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 m-b-15 ">
-          {/* <BrowserUsage data={Data.dashBoardPage.browserUsage}/> */}
           <StaticImage info={props.refInput}/>
         </div>
       </div>

@@ -9,7 +9,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 let ctx;
 let canvas;
-class BrowserUsage extends React.Component {
+class RealTimeVideoContainer extends React.Component {
 
   constructor(props) {
     super(props);
@@ -134,8 +134,8 @@ class BrowserUsage extends React.Component {
   }
 }
 
-BrowserUsage.propTypes = {
+RealTimeVideoContainer.propTypes = {
   data: PropTypes.array
 };
 
-export default BrowserUsage;
+export default RealTimeVideoContainer;
