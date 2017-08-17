@@ -34,23 +34,23 @@ class App extends React.Component {
       currentLecture: '123',
       date: new Date().toISOString(),
       totalStudents:30,
-      lectureName:'deafult',
+      lectureName:'',
       studentsList: [
-        {
-          id: 0,
-          title: 'Yash Nardtiva',
-          text: 'Time : 9:04',
-          _id: 123
-        }
+        // {
+        //   id: 0,
+        //   title: 'Yash Nardtiva',
+        //   text: 'Time : 9:04',
+        //   _id: 123
+        // }
       ],
       UnRecognizedFaces: [
-        {
-          id: 0,
-          title: 'Dummy Data',
-          text: 'Dummy Data 1',
-          face_token: '',
-          avatar: ''
-        },
+        // {
+        //   id: 0,
+        //   title: 'Dummy Data',
+        //   text: 'Dummy Data 1',
+        //   face_token: '',
+        //   avatar: ''
+        // },
       ],
       classes:[]
     };
@@ -303,12 +303,9 @@ console.log(_this.state.currentLecture,_this.state.class);
 
         <LeftDrawer navDrawerOpen={navDrawerOpen} menus={Data.menus} username="Professor Benjamin"/>
 
-        <Dialog title="Start a Lecture" actions={[< FlatButton label = "Start Scan" onClick = {
+      <Dialog title="Start a Lecture"   actions={[< FlatButton label = "Start Scan" onClick = { //autoScrollBodyContent={true}
               (e) => this.handleCloseModal(e)
             } />]} modal={false} open={this.state.dialogOpen} onRequestClose={(e) => this.handleCloseModal(e)}>
-            Please choose info before scan
-
-            <TextField value={this.state.lectureName} onChange={this.handleChangeModalLectureName.bind(this)} />
 
             <SelectField floatingLabelText="Term" value={this.state.term} fullWidth={true} onChange={this.handleChangeModalTerm.bind(this)}>
               <MenuItem key={0} value='Fall' primaryText="Fall"/>
@@ -322,7 +319,9 @@ console.log(_this.state.currentLecture,_this.state.class);
                 return( <MenuItem key={i} value={item._id} primaryText={item.name} />)
               })}
             </SelectField>
-            <TextField name="SearchTime" hintText="Time for search in min" floatingLabelText="Time for search" fullWidth={true} value={this.state.searchTime} onChange={this.handleChangeModalTime.bind(this)}/>
+            <TextField name="SearchTime" floatingLabelText="Enter search Time" hintText="Time for search in min"  fullWidth={true} value={this.state.searchTime} onChange={this.handleChangeModalTime.bind(this)}/>
+          <TextField name="subject" floatingLabelText="Enter lecture name/subject"  hintText="Enter lecture name/subject"  fullWidth={true} value={this.state.lectureName} onChange={this.handleChangeModalLectureName.bind(this)}/>
+
           </Dialog>
 
           <div style={styles.container}>

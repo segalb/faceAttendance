@@ -66,6 +66,7 @@ class LecturesView extends React.Component {
         tmpArr.push(item._id);
         tmpArr.push(_this.dateFormatter(item.date));
         tmpArr.push(item.students.length);
+
         let counter = 0;
         item.students.forEach(item2 => {
           if (item2.attendance === 1) {
@@ -73,6 +74,7 @@ class LecturesView extends React.Component {
           }
         });
         tmpArr.push(counter);
+        tmpArr.push(item.name)
         tmpArr = tmpArr.concat(item.students);
         console.log("temp Arr at ", i, tmpArr);
         arr.push(tmpArr);
@@ -91,7 +93,7 @@ class LecturesView extends React.Component {
     console.log("i is", i)
     e.preventDefault();
     console.log('arr is', arr);
-    let arr1 = arr[i].slice(4);
+    let arr1 = arr[i].slice(5);
     console.log('arr1 is', arr1);
     this.setState({dialogOpen: true, studentsInLecture: arr1, lectureName: arr[i][1]
     });
@@ -107,7 +109,7 @@ class LecturesView extends React.Component {
       showUser: !this.state.showUser
     })
     console.log("arr is", arr);
-    arr2 = arr[arr.length-1].slice(4); // array of all students name in class
+    arr2 = arr[arr.length-1].slice(5); // array of all students name in class
 
     arr2 = arr2.map(item => {
       return [item.student.fname + " " + item.student.lname];
@@ -122,12 +124,12 @@ class LecturesView extends React.Component {
     console.log("arr2 is", arr2);
     console.log("amount of lectures", arr.length);
     for (let j = 0; j < arr.length; j++) {
-      for (let k = 4; k < arr[j].length; k++) {
-        console.log(arr2[k-4]);
-        arr2[k - 4].push({lectureDate: arr[j][1], attendance: arr[j][k].attendance
+      for (let k = 5; k < arr[j].length; k++) {
+        console.log(arr2[k-5]);
+        arr2[k - 5].push({lectureDate: arr[j][1], attendance: arr[j][k].attendance
         });
         if (arr[j][k].attendance === 1) {
-          arr2[k - 4][2]++;
+          arr2[k - 5][2]++;
         }
       }
     }
@@ -139,7 +141,7 @@ class LecturesView extends React.Component {
     console.log("i is", i)
     e.preventDefault();
     console.log('arr2 is', arr2);
-    let arr2Tmp = arr2[i].slice(3);
+    let arr2Tmp = arr2[i].slice(4);
     console.log('arr2 after slice is', arr2Tmp);
     this.setState({dialogOpen: true, lecturePerStudentReport: arr2Tmp, studentNameReport: arr2[i][0]
     });
@@ -250,7 +252,7 @@ class LecturesView extends React.Component {
 
     } else {
       return (
-        <PageBase title="Lectures for calss x Page" navigation="Application / Table Page">
+        <PageBase title="Summary of lectures" navigation="Application / Table Page">
           <div>
             <div className="row" style={{
               margin: 10
@@ -303,7 +305,7 @@ class LecturesView extends React.Component {
               <TableBody displayRowCheckbox={false}>
                 {this.state.data.map((item, i) => <TableRow key={i}>
                   <TableRowColumn style={styles.columns.id}>{i}</TableRowColumn>
-                  <TableRowColumn style={styles.columns.name}>Place holder
+                <TableRowColumn style={styles.columns.name}>{item[4]}
                   </TableRowColumn>
                   <TableRowColumn style={styles.columns.price}>{item[1]}</TableRowColumn>
                   <TableRowColumn style={styles.columns.category}>{(item[2] === 0)
