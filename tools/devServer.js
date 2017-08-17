@@ -199,6 +199,7 @@ io.on('connection', socket => {
     // camera.getScreenshot(function(err, frame) {
     //
     // });
+    //think of keeling the name space and use only the camera base on the specific socket
   });
 
 
@@ -387,16 +388,21 @@ io.on('connection', socket => {
       wsocket.on('disconnect', function() {
         console.log('disconnected from /cam' + i);
         ns.removeAllListeners(); //ask jay if this the best way to do that -  https://stackoverflow.com/questions/26400595/socket-io-how-do-i-remove-a-namespace
+        //think of adding the socket on disconnect
         console.log('I removed all listeners');
         camStream.removeListener('data', pipeStream);
       });
     });
+
+
   });
 
   //
 
   socket.on('disconnect', () => {
     console.log("Client disconnect");
+
+
   });
 
 });

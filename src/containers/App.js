@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Header from '../components/Header';
 import LeftDrawer from '../components/LeftDrawer';
+import DashBoardModal from '../components/DashBoardModal';
 import withWidth, {LARGE, SMALL} from 'material-ui/utils/withWidth';
 import ThemeDefault from '../theme-default';
 import Data from '../data';
@@ -137,32 +138,7 @@ class App extends React.Component {
         //TODO: update the status of total count here
         this.setState({studentsList: studentsListTmp});
 
-        // axios.post("/startAnalysis", {
-        //   term: this.state.term,
-        //   class: this.state.class,
-        //   date: this.state.date,
-        //   searchTime: this.state.searchTime
-        // }).then(function(response) {
-        //   console.log("there is response", response);
-        // }).catch(function(error) {
-        //   console.log(error);
-        // });
-
       }
-
-      // socket.on('drawData', (res) => {
-      //
-      //   var tmp = JSON.parse(res.body);
-      //   if (tmp.faces.length > 0) {
-      //     console.log("there are faces", tmp.faces)
-      //   }
-      //
-      //   //  console.log(this.state.image)
-      //   console.log("information is here", res)
-      //   this.setState({
-      //     image: `data:image/jpeg;base64,` + res.image
-      //   })
-      // });
 
     });
   }
@@ -233,10 +209,10 @@ class App extends React.Component {
       searchTime: this.state.searchTime,
       classId: this.state.class,
       name:this.state.lectureName
-    }).then(function(response) {
+    }).then((response) => {
       console.log("there is response hhhh", response);
       console.log(response.data);
-      _this.setState({currentLecture: response.data.class,totalStudents:response.data.studentNum})
+      this.setState({currentLecture: response.data.class,totalStudents:response.data.studentNum}) //made change for _this
     }).catch(function(error) {
       console.log(error);
     });
@@ -303,26 +279,22 @@ console.log(_this.state.currentLecture,_this.state.class);
 
         <LeftDrawer navDrawerOpen={navDrawerOpen} menus={Data.menus} username="Professor Benjamin"/>
 
-      <Dialog title="Start a Lecture"   actions={[< FlatButton label = "Start Scan" onClick = { //autoScrollBodyContent={true}
-              (e) => this.handleCloseModal(e)
-            } />]} modal={false} open={this.state.dialogOpen} onRequestClose={(e) => this.handleCloseModal(e)}>
 
-            <SelectField floatingLabelText="Term" value={this.state.term} fullWidth={true} onChange={this.handleChangeModalTerm.bind(this)}>
-              <MenuItem key={0} value='Fall' primaryText="Fall"/>
-              <MenuItem key={1} value='Spring' primaryText="Spring"/>
-              <MenuItem key={2} value='Summer' primaryText="Summer"/>
-            </SelectField>
-            <DatePicker hintText="Date Picker" defaultDate ={new Date()} onChange={this.handleChangeModalDate.bind(this)}/>
-            <SelectField floatingLabelText="Class" value={this.state.class} fullWidth={true} onChange={this.handleChangeModal.bind(this)}>
-              {/* TODO: take class from DB */}
-              {this.state.classes.map((item,i) =>{
-                return( <MenuItem key={i} value={item._id} primaryText={item.name} />)
-              })}
-            </SelectField>
-            <TextField name="SearchTime" floatingLabelText="Enter search Time" hintText="Time for search in min"  fullWidth={true} value={this.state.searchTime} onChange={this.handleChangeModalTime.bind(this)}/>
-          <TextField name="subject" floatingLabelText="Enter lecture name/subject"  hintText="Enter lecture name/subject"  fullWidth={true} value={this.state.lectureName} onChange={this.handleChangeModalLectureName.bind(this)}/>
+        <DashBoardModal startButtonClick= {(e) => this.handleCloseModal(e)}
+            open= {this.state.dialogOpen}
+            onRequestClose ={(e) => this.handleCloseModal(e)}
+            term={this.state.term}
+            onChangeModalTerm= {this.handleChangeModalTerm.bind(this)}
+            onChangeModalDate= {this.handleChangeModalDate.bind(this)}
+            class = {this.state.class}
+            onChangeClass = {this.handleChangeModal.bind(this)}
+            classes= {this.state.classes}
+            searchTime = {this.state.searchTime}
+            onChangeModalTime = {this.handleChangeModalTime.bind(this)}
+            lectureName = {this.state.lectureName}
+            onChangeModalLectureName = {this.handleChangeModalLectureName.bind(this)}
+          />
 
-          </Dialog>
 
           <div style={styles.container}>
             {React.cloneElement(this.props.children, {
@@ -331,7 +303,7 @@ console.log(_this.state.currentLecture,_this.state.class);
               refLiveView: this.state.liveView,
               refStudentList: this.state.studentsList,
               refUnRecognizedFaces: this.state.UnRecognizedFaces,
-              refClick: this.onClickOneFace,
+              refClick: this.onClickOneFace.bind(this), //bind(this  => _this) //jay
               refclass: this.state.class,
               refCurrentLecture: this.state.currentLecture,
               refTotalStudents :this.state.totalStudents

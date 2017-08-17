@@ -54,3 +54,40 @@
         //   // console.log(buffer);
         //
         // })
+
+
+        <DashBoardModal startButtonClick= {(e) => this.handleCloseModal(e)}
+            open= {this.state.dialogOpen}
+            onRequestClose ={(e) => this.handleCloseModal(e)}
+            term={this.state.term}
+            onChangeModalTerm= {this.handleChangeModalTerm.bind(this)}
+            onChangeModalDate= {this.handleChangeModalDate.bind(this)}
+            class = {this.state.class}
+            onChangeClass = {this.handleChangeModal.bind(this)}
+            classes= {this.state.classes}
+            searchTime = {this.state.searchTime}
+            onChangeModalTime = {this.handleChangeModalTime.bind(this)}
+            lectureName = {this.state.lectureName}
+            onChangeModalLectureName = {this.handleChangeModalLectureName.bind(this)}
+          />
+
+
+
+          <Dialog title="Start a Lecture"   actions={[< FlatButton label = "Start Scan" onClick = { //autoScrollBodyContent={true}
+                  this.props.startButtonClick
+                } />]} modal={false} open={this.props.open} onRequestClose={this.props.onRequestClose}>
+                <SelectField floatingLabelText="Term" value={this.props.term} fullWidth={true} onChange={this.props.onChangeModalTerm}>
+                  <MenuItem key={0} value='Fall' primaryText="Fall"/>
+                  <MenuItem key={1} value='Spring' primaryText="Spring"/>
+                  <MenuItem key={2} value='Summer' primaryText="Summer"/>
+                </SelectField>
+                <DatePicker hintText="Date Picker" defaultDate ={new Date()} onChange={this.props.onChangeModalDate}/>
+              <SelectField floatingLabelText="Class" value={this.props.class} fullWidth={true} onChange={this.props.onChangeClass}>
+                  {/* TODO: take class from DB */}
+                  {this.props.classes.map((item,i) =>{
+                    return( <MenuItem key={i} value={item._id} primaryText={item.name} />)
+                  })}
+                </SelectField>
+                <TextField name="SearchTime" floatingLabelText="Enter search Time" hintText="Time for search in min"  fullWidth={true} value={this.props.searchTime} onChange={this.props.onChangeModalTime}/>
+              <TextField name="subject" floatingLabelText="Enter lecture name/subject"  hintText="Enter lecture name/subject"  fullWidth={true} value={this.props.lectureName} onChange={this.props.onChangeModalLectureName}/>
+              </Dialog>
