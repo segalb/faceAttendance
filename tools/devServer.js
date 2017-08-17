@@ -258,40 +258,7 @@ io.on('connection', socket => {
 
     var faceSet = false;
 
-    //Create the face set - only one time:
-    // if(faceSet){
-    //   request.post({
-    //     url: API_URL + 'faceset/create',
-    //     form: {
-    //       'api_key': API_KEY,
-    //       'api_secret': API_SECRET,
-    //       'display_name': "Horizons Students Summer 2017",
-    //       'outer_id': '1'
-    //           }
-    //   }, function(error, response, body) {
-    //       console.log("Added faceSet");
-    //       console.log('body', body);
-    //   });
-    // }
 
-    //add face to data set
-    // if (!faceSet) {
-    //   request.post({
-    //     url: API_URL + 'faceset/addface',
-    //     form: {
-    //       'api_key': API_KEY,
-    //       'api_secret': API_SECRET,
-    //       'face_tokens': "350522cddc23054c17848307a92ac7b5",
-    //       'outer_id': '1'
-    //     }
-    //   }, function(error, response, body) {
-    //     console.log("Added face to horizones face set");
-    //     console.log('body', body);
-    //   });
-    // }
-
-    // TODO: Clean code for screen shots every 5 sec 1 screen shot
-    //TODO: Organize code:
 
     // var MjpegCamera = require('mjpeg-camera');
     // var FileOnWrite = require('file-on-write');
@@ -304,11 +271,8 @@ io.on('connection', socket => {
     //
     // });
   });
-  //rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov
-  //rtsp://freja.hiof.no:1935/rtplive/_definst_/hessdalen03.stream
-  //rtsp://admin:b12345678@10.2.107.121:80/cam/realmonitor?channel=1&subtype=0
-  //local host rtsp://admin:b12345678@10.2.107.77:80/cam/realmonitor?channel=1&subtype=0
-  //rtsp://admin:b12345678@10.2.107.121:554/cam/realmonitor?channel=1&subtype=0
+
+
   var cams = ['rtsp://admin:b12345678@10.2.107.121:80/cam/realmonitor?channel=1&subtype=0'].map(function(uri, i) {
     var stream = new rtsp.FFMpeg({input: uri, resolution: '640x480', quality: 1, rate: 25});
     stream.on('start', function() {
@@ -339,22 +303,10 @@ io.on('connection', socket => {
 
         var base64data = new Buffer(data).toString('base64');
 
-        //  var buf = require('fs').readFileSync('./camera/frames/camera-screenshot_1501021011645.jpg');
-
-        // var d = gm(buf, "output.jpg").crop(145, 145, 259, 147);
-        // gm(buf, 'image.jpg').crop(145, 145, 259, 147).toBuffer('jpg', function(err, buffer) {
-        //   console.log(buffer);
-        //   wsocket.emit('data', buffer);
-        // })
-
-        // gmToBuffer(d).then(function(buffer) {
-        //   // console.log(buffer);
-        //
-        // })
         //  console.log("base64data", base64data)
         // check for face in face set
         x++;
-        if (x % 10 === 0 && startImgAnalysis) {
+        if (x % 30 === 0 && startImgAnalysis) {
           // if (startImgAnalysis) {
           // console.log(x);
           request.post({
