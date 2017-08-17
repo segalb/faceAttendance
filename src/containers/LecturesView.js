@@ -182,7 +182,7 @@ class LecturesView extends React.Component {
     if (this.state.showUser) { //user view component
       //if we want to see users- build components for this 2 cases
       return (
-        <PageBase title="Users for class x Page" navigation="Application / Table Page">
+        <PageBase title="Summary - Students for class" navigation="Application / Table Page">
           <div>
             <div className="row" style={{
               margin: 10

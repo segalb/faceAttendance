@@ -204,7 +204,7 @@ io.on('connection', socket => {
 
 
   var cams = ['rtsp://admin:b12345678@10.2.107.121:80/cam/realmonitor?channel=1&subtype=0'].map(function(uri, i) {
-    var stream = new rtsp.FFMpeg({input: uri, resolution: '640x480', quality: 1, rate: 25});
+    var stream = new rtsp.FFMpeg({input: uri, resolution: '640x480', quality: 3, rate: 25});
     stream.on('start', function() {
       console.log('stream ' + i + ' started');
     });
