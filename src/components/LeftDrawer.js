@@ -1,7 +1,7 @@
 import React,  { PropTypes } from 'react';
 import Drawer from 'material-ui/Drawer';
 import {spacing, typography} from 'material-ui/styles';
-import {white, blue600} from 'material-ui/styles/colors';
+import {white, blue600,blueGrey600} from 'material-ui/styles/colors';
 import MenuItem from 'material-ui/MenuItem';
 import {Link} from 'react-router';
 import Avatar from 'material-ui/Avatar';
@@ -16,7 +16,7 @@ const LeftDrawer = (props) => {
       color: typography.textFullWhite,
       lineHeight: `${spacing.desktopKeylineIncrement}px`,
       fontWeight: typography.fontWeightLight,
-      backgroundColor: blue600,
+      backgroundColor: blueGrey600, //blue600
       paddingLeft: 40,
       height: 56,
     },
@@ -27,7 +27,7 @@ const LeftDrawer = (props) => {
     avatar: {
       div: {
         padding: '15px 0 20px 15px',
-        backgroundImage:  'url(' + require('../images/material_bg.png') + ')',
+        backgroundImage:  'url(' + require('../images/material_bg.jpg') + ')',
         height: 45
       },
       icon: {
@@ -54,7 +54,7 @@ const LeftDrawer = (props) => {
           Tend App
         </div>
         <div style={styles.avatar.div}>
-          <Avatar src="http://www.material-ui.com/images/uxceo-128.jpg"
+          <Avatar src="https://www.shareicon.net/data/128x128/2016/07/05/791223_people_512x512.png"
                   size={50}
                   style={styles.avatar.icon}/>
           <span style={styles.avatar.span}>{props.username}</span>

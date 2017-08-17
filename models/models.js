@@ -7,13 +7,7 @@ let studentSchema = new Schema({
   fname: String,
   lname: String,
   face_tokens: [String],
-  image: String, // TODO: represent the person  ( will need to use s3 ==> use the image that you sign in as face token)
-  classes: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Classes'
-    }
-  ]
+  image: String // TODO: represent the person  ( will need to use s3 ==> use the image that you sign in as face token)
 });
 
 let professorSchema = Schema({
@@ -52,17 +46,21 @@ let lecturesSchema = Schema({
   //   type: Schema.Types.ObjectId,
   //   ref: 'lectures'
   // },
-  students: [
-    {
+  students: [new Schema({
       student: {
         type: Schema.Types.ObjectId,
         ref: 'Student'
       },
       attendance: Number
-    }
+    },{
+      _id: false
+    })
   ],
-  date: Date
+  date: Date,
+  name: String
 });
+
+
 
 studentSchema.statics.findOrCreate = function(obj1, obj2, cb) {
   Student.findOne(obj1, function(err, user) {

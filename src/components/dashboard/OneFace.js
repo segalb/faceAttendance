@@ -14,6 +14,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Wallpaper from 'material-ui/svg-icons/device/wallpaper';
 import axios from 'axios';
 
+
 class OneFace extends React.Component {
   constructor(props) {
     super(props);
@@ -22,13 +23,17 @@ class OneFace extends React.Component {
       fname: "",
       lname: "",
       face_token: props.face_token,
-      onClickOneFace: props.onClick,
+      onClickOneFace: props.onClick,  //change to this.props.onClick
       avatar: props.avatar
+      // currentLecture:props.refCurrentLecture,
+      // class: props.refClass
     };
     this.onChange = this.onChange.bind(this);
   }
 
   onChange(name, event, value) {
+    //ask jay why this.props is not working here
+    console.log("the class and the currentLecture are", this.props.refClass,this.props.refCurrentLecture);
     if (name === "fname") {
       this.setState({fname: value})
     } else if (name === "lname") {
@@ -44,7 +49,9 @@ class OneFace extends React.Component {
       fname: this.state.fname,
       lname: this.state.lname,
       face_token: this.state.face_token,
-      image: ''
+      image: '',
+      class:this.props.refClass,
+      lecture:this.props.refCurrentLecture
     }).then(function() {
       this.state.onClickOneFace(this.state)
       this.setState({fname: "", lname: ""});
@@ -67,7 +74,7 @@ class OneFace extends React.Component {
         fontSize: 18,
         fontWeight: typography.fontWeightMedium,
         color: white,
-        marginLeft: 65,
+        marginLeft: 45,
         width: 200
       },
       plusButton: {

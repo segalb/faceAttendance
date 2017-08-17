@@ -103,23 +103,27 @@ class LecturesView extends React.Component {
   }
 
   handleByUserClick(e) {
-
     this.setState({
       showUser: !this.state.showUser
     })
-    arr2 = arr[0].slice(4); // array of all students name in class
+    console.log("arr is", arr);
+    arr2 = arr[arr.length-1].slice(4); // array of all students name in class
+
     arr2 = arr2.map(item => {
       return [item.student.fname + " " + item.student.lname];
     })
+
 
     //change map into this for so it will iteratte only once
     for (let i = 0; i < arr2.length; i++) {
       arr2[i].push(arr.length);
       arr2[i].push(0);
     }
+    console.log("arr2 is", arr2);
     console.log("amount of lectures", arr.length);
     for (let j = 0; j < arr.length; j++) {
       for (let k = 4; k < arr[j].length; k++) {
+        console.log(arr2[k-4]);
         arr2[k - 4].push({lectureDate: arr[j][1], attendance: arr[j][k].attendance
         });
         if (arr[j][k].attendance === 1) {
@@ -176,7 +180,7 @@ class LecturesView extends React.Component {
     if (this.state.showUser) { //user view component
       //if we want to see users- build components for this 2 cases
       return (
-        <PageBase title="Lectures for calss x Page" navigation="Application / Table Page">
+        <PageBase title="Users for class x Page" navigation="Application / Table Page">
           <div>
             <div className="row" style={{
               margin: 10
@@ -191,7 +195,7 @@ class LecturesView extends React.Component {
               </FloatingActionButton>
             </Link> */}
 
-            <Dialog title={this.state.studentNameReport + " - lectures status"} actions={[< FlatButton label = "Start Scan" onTouchTap = {
+            <Dialog  title={this.state.studentNameReport + " - lectures status"} autoScrollBodyContent={true} actions={[< FlatButton label = "Close" onTouchTap = {
                 (e) => this.handleCloseModal(e)
               } />]} modal={false} open={this.state.dialogOpen} onRequestClose={(e) => this.handleCloseModal(e)}>
 
@@ -261,7 +265,7 @@ class LecturesView extends React.Component {
               </FloatingActionButton>
             </Link> */}
 
-            <Dialog title={"Student status in this lecture - " + this.state.lectureName} actions={[< FlatButton label = "Start Scan" onTouchTap = {
+            <Dialog title={"Student status in this lecture - " + this.state.lectureName} autoScrollBodyContent={true} actions={[< FlatButton label = "Close" onTouchTap = {
                 (e) => this.handleCloseModal(e)
               } />]} modal={false} open={this.state.dialogOpen} onRequestClose={(e) => this.handleCloseModal(e)}>
 

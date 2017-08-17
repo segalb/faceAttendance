@@ -43,12 +43,14 @@ const DashboardPage = (props) => {
       <div className="row">
 
         <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 m-b-15 ">
-          <UnRecognizedStudent data={props.refUnRecognizedFaces} name="Can't recognize faces" refClick={props.refClick}/>
+          <UnRecognizedStudent data={props.refUnRecognizedFaces} name="Can't recognize faces" refClick={props.refClick} refClass = {props.refclass} refCurrentLecture={props.refCurrentLecture}/>
+
+
         </div>
         {/* Old Data {Data.dashBoardPage.recentProducts} */}
         <div className="col-xs-12 col-sm-6 col-md-6 col-lg-6 m-b-15 ">
-          <InfoBox Icon={Face} color={orange600} title="Total users in Class" value="15/30"/>
-          <RecentlyProducts data={props.refStudentList} name="List of students in class"/>
+          {/* <InfoBox Icon={Face} color={orange600} title="Total users in Class" value="15/30"/> */}
+          <RecentlyProducts data={props.refStudentList} totalStudents={props.refTotalStudents} name="List of students in class"/>
         </div>
       </div>
 

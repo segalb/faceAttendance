@@ -5,7 +5,7 @@ import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 
-import {grey400, cyan600, white} from 'material-ui/styles/colors';
+import {grey400, cyan600, white,blueGrey500} from 'material-ui/styles/colors';
 import {typography} from 'material-ui/styles';
 import Wallpaper from 'material-ui/svg-icons/device/wallpaper';
 import TextField from 'material-ui/TextField';
@@ -20,16 +20,17 @@ class UnRecognizedStudent extends React.Component {
     this.state = {
       data,
       name,
-      refClick
+      refClick,
     };
   }
+
 
   render() {
     const styles = {
       subheader: {
         fontSize: 24,
         fontWeight: typography.fontWeightLight,
-        backgroundColor: cyan600,
+        backgroundColor: blueGrey500,
         color: white
       },
       input: {
@@ -49,7 +50,7 @@ class UnRecognizedStudent extends React.Component {
         <List>
           <Subheader style={styles.subheader}>{this.state.name}</Subheader>
           {this.props.data.map((item, i) => <div key={i}>
-            <OneFace id={item.id} onClick={this.state.refClick} face_token={item.face_token} avatar={item.avatar}/>
+            <OneFace id={item.id} onClick={this.state.refClick} face_token={item.face_token} avatar={item.avatar} refClass={this.props.refClass} refCurrentLecture={this.props.refCurrentLecture}/>
           </div>)}
         </List>
       </Paper>

@@ -31,7 +31,9 @@ class App extends React.Component {
       searchTime: "3",
       term: 'Fall',
       class: '597b6f386a14a22e7cd0a6d7',
+      currentLecture: '123',
       date: new Date().toISOString(),
+      totalStudents:30,
       studentsList: [
         {
           id: 0,
@@ -215,7 +217,7 @@ class App extends React.Component {
   }
 
   handleCloseModal() {
-    console.log("here2",this.state.classbb);
+    console.log("here2",this.state.class);
     this.setState({dialogOpen: false});
     axios.post("/startAnalysis", {
       term: this.state.term,
@@ -224,7 +226,9 @@ class App extends React.Component {
       searchTime: this.state.searchTime,
       classId: this.state.class
     }).then(function(response) {
-      console.log("there is response", response);
+      console.log("there is response hhhh", response);
+      console.log(response.data);
+      _this.setState({currentLecture: response.data.class,totalStudents:response.data.studentNum})
     }).catch(function(error) {
       console.log(error);
     });
@@ -238,10 +242,11 @@ class App extends React.Component {
   }
 
   onClickOneFace(data) {
-
+console.log(_this.state.currentLecture,_this.state.class);
     console.log("clicked : ************** ", data);
 
     var UnRecognizedFacesTmp = _this.state.UnRecognizedFaces.slice();
+
     console.log("array befoe splice", _this.state.UnRecognizedFaces);
     console.log("data id to delete is", data.id);
     UnRecognizedFacesTmp.splice(data.id, 1);
@@ -249,7 +254,19 @@ class App extends React.Component {
     for (var i = 0; i < UnRecognizedFacesTmp.length; i++) {
       UnRecognizedFacesTmp[i].id = i;
     }
-    _this.setState({UnRecognizedFaces: UnRecognizedFacesTmp});
+
+    var recognizedFaces =_this.state.studentsList.slice();
+
+
+    var studentObj =  {
+        id: recognizedFaces.length,
+        title: data.fname+" "+ data.lname,
+        text: 'Time : '+ _this.addZero(new Date().getHours())+":"+ _this.addZero(new Date().getMinutes()),
+        _id: 123
+      };
+      recognizedFaces.push(studentObj);
+
+    _this.setState({UnRecognizedFaces: UnRecognizedFacesTmp,studentsList:recognizedFaces});
 
   }
 
@@ -276,7 +293,7 @@ class App extends React.Component {
         <div>
           <Header styles={styles.header} handleChangeRequestNavDrawer={this.handleChangeRequestNavDrawer.bind(this)}/>
 
-          <LeftDrawer navDrawerOpen={navDrawerOpen} menus={Data.menus} username="User Admin"/>
+        <LeftDrawer navDrawerOpen={navDrawerOpen} menus={Data.menus} username="Professor Benjamin"/>
 
         <Dialog title="Start a Lecture" actions={[< FlatButton label = "Start Scan" onClick = {
               (e) => this.handleCloseModal(e)
@@ -304,7 +321,10 @@ class App extends React.Component {
               refLiveView: this.state.liveView,
               refStudentList: this.state.studentsList,
               refUnRecognizedFaces: this.state.UnRecognizedFaces,
-              refClick: this.onClickOneFace
+              refClick: this.onClickOneFace,
+              refclass: this.state.class,
+              refCurrentLecture: this.state.currentLecture,
+              refTotalStudents :this.state.totalStudents
             })}
           </div>
         </div>

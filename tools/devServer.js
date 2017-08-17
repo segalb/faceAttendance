@@ -89,7 +89,7 @@ app.post('/startAnalysis', (req, res) => {
       })
       console.log("tmp array is ", tmpArr);
       API_KEY_FACESET_OUTRERID = classTmp.faceSet; // assign new faceSet group to search within
-      var newLecture = new Lectures({ students: tmpArr, date: req.body.date});
+      var newLecture = new Lectures({ students: tmpArr, date: req.body.date, req.body.name});
       newLecture.save(function(err, lectureTmp) {
         if (err) {
           console.log(err);
@@ -99,9 +99,24 @@ app.post('/startAnalysis', (req, res) => {
 
           //push to class the specific lecture
 
+          Classes.findByIdAndUpdate(classTmp._id, {
+            $push: {
+              "lectures": lectureTmp._id
+            }
+          }, {
+            safe: true,
+            upsert: true,
+            new: true
+          }, function(err, lectureTmp) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(lectureTmp);
+            }
+          });
 
           //
-          res.sendStatus(200);
+          res.send({currentLecture:lectureTmp._id,studentNum:lectureTmp.students.length});
         }
       });
     }
@@ -114,8 +129,7 @@ app.post('/signup', function(req, res) {
     fname: req.body.fname,
     lname: req.body.lname,
     face_tokens: [req.body.face_token],
-    image: req.body.image,
-    classes: []
+    image: req.body.image
   });
   newUser.save(function(err, user) {
     if (err) {
@@ -137,6 +151,46 @@ app.post('/signup', function(req, res) {
         console.log('body', body);
         res.sendStatus(200);
       });
+      if(req.body.class){
+        var user_id = mongoose.Types.ObjectId(user._id);
+
+        Classes.findByIdAndUpdate(req.body.class, {
+          $push: {
+            "students": user_id
+          }
+        }, {
+          safe: true,
+          upsert: true,
+          new: true
+        }, function(err, classTemp) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(classTemp);
+          }
+        });
+
+        //
+        Lectures.findByIdAndUpdate(req.body.lecture, {
+          $push: {
+            "students": {
+              student: user_id,
+              attendance:1
+              }
+          }
+        }, {
+          safe: true,
+          upsert: true,
+          new: true
+        }, function(err, classTemp) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log('succes',classTemp);
+          }
+        });
+      }
+
     }
   });
 });
@@ -254,8 +308,9 @@ io.on('connection', socket => {
   //rtsp://freja.hiof.no:1935/rtplive/_definst_/hessdalen03.stream
   //rtsp://admin:b12345678@10.2.107.121:80/cam/realmonitor?channel=1&subtype=0
   //local host rtsp://admin:b12345678@10.2.107.77:80/cam/realmonitor?channel=1&subtype=0
+  //rtsp://admin:b12345678@10.2.107.121:554/cam/realmonitor?channel=1&subtype=0
   var cams = ['rtsp://admin:b12345678@10.2.107.121:80/cam/realmonitor?channel=1&subtype=0'].map(function(uri, i) {
-    var stream = new rtsp.FFMpeg({input: uri, resolution: '1280x720', quality: 3, rate: 25});
+    var stream = new rtsp.FFMpeg({input: uri, resolution: '640x480', quality: 1, rate: 25});
     stream.on('start', function() {
       console.log('stream ' + i + ' started');
     });
@@ -331,7 +386,14 @@ io.on('connection', socket => {
 
             var tmp = JSON.parse(body);
             console.log(tmp.faces);
+
             if (tmp.faces) {
+              // console.log("im here")
+              // if(tmp.faces.length===0){
+              //   var fs = require('fs');
+              //   fs.writeFile('./camera/frames/camera-screenshot_' + Date.now() + '.jpg ', data);
+              // }
+
               tmp.faces.forEach((item, i) => {
                 facesArr.push({
                   x0: item.face_rectangle.left,
@@ -358,7 +420,7 @@ io.on('connection', socket => {
                   console.log("The face token is " + item.face_token)
                   console.log('body', body);
                   if (JSON.parse(body).results) {
-                    JSON.parse(body).results.forEach((itemTmp) => {
+                    JSON.parse(body).results.forEach((itemTmp,index) => {
                       console.log("face token is ", itemTmp.face_token);
                       console.log("confidence is ", itemTmp.confidence);
                       if (itemTmp.confidence > 80) { //TODO: global number change to prototyp  __Ty_P_
@@ -371,23 +433,54 @@ io.on('connection', socket => {
                             console.log("find the student with the specific face token", findTmp)
                             socket.emit('RegisteredFace', {person: findTmp});
 
-                            //
-                            Lectures.findByIdAndUpdate(currentSubClassID, {
-                              $addToSet: {
-                                "Students": findTmp[0]._id
-                              }
-                            }, {
-                              safe: true,
-                              upsert: true,
-                              new: true
-                            }, function(err, tmp) {
-                              if (err) {
-                                console.log(err);
-                              } else {
-                                console.log(tmp);
-                              }
-                            });
-                            //
+                            if(index === 0){
+
+                              Lectures.findById(currentSubClassID, function(err,lecture){
+                                if(err){
+                                  console.log(err);
+                                }else{
+                                  console.log(lecture);
+                                  console.log("im here")
+                                  lecture.students.forEach((item)=>{
+                                    if(item.student.toString() === findTmp[0]._id.toString()){
+                                      console.log("i found Benjamin change in db");
+                                      item.attendance= 1;
+                                    }
+                                  });
+                                  lecture.markModified('array');
+                                lecture.save();
+                                }
+                              });
+
+                              // Lectures.findByIdAndUpdate(currentSubClassID, {
+                              //   // $addToSet: {
+                              //   //   "Students": findTmp[0]._id
+                              //   // }
+                              //   // $addToSet: {
+                              //   //   "students": {
+                              //   //     student: findTmp[0]._id,
+                              //   //     attendance:1
+                              //   //     }
+                              //   // }
+                              //   'students.student' : { '$ne': findTmp[0]._id}
+                              // }, {
+                              //   // safe: true,
+                              //   // upsert: true,
+                              //   // new: true
+                              //   'students': { '$push': {
+                              //       student: findTmp[0]._id,
+                              //       attendance:1
+                              //       } }
+                              // }, function(err, tmp) {
+                              //   if (err) {
+                              //     console.log(err);
+                              //   } else {
+                              //     console.log(tmp);
+                              //   }
+                              // });
+                              // //
+                            }
+
                           }
                         });
                       } else { //confidence is less then 80% new user
@@ -498,9 +591,9 @@ io.on('connection', socket => {
                       }
                     });
                   }
-                  // var fs = require('fs');
-                  // fs.writeFile('./camera / frames / camera - screenshot_ ' + Date.now() + '.jpg ', data);
+
                 });
+
               });
 
             } else { //check for errors

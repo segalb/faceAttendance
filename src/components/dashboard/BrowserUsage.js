@@ -45,7 +45,9 @@ class BrowserUsage extends React.Component {
         URL.revokeObjectURL(url);
 
         // ctx.drawImage(img, 0, 0, 1280, 720, 0, 0, 640, 480);
-        ctx.drawImage(img, 0, 0);
+          // ctx.drawImage(img, 0, 0, 1280, 960, 0, 0, 512, 384);
+              ctx.drawImage(img, 0, 0, 640, 480, 0, 0, 512, 384);
+        // ctx.drawImage(img, 0, 0);
 
       };
       img.src = url;
@@ -56,7 +58,9 @@ class BrowserUsage extends React.Component {
     const styles = {
       paper: {
         minHeight: 460,
-        padding: 10
+        paddingLeft: 30,
+        paddingTop: 10,
+        paddingRight:10
       },
       legend: {
         paddingTop: 20
@@ -69,7 +73,7 @@ class BrowserUsage extends React.Component {
         width: "100%",
         height: "100%",
         minHeight: "460",
-        minWidth: "610"
+        minWidth: "560",
       },
       liveStream: {
         width: "100%"
@@ -78,13 +82,14 @@ class BrowserUsage extends React.Component {
 
     return (
       <Paper style={styles.paper}>
-        <span style={GlobalStyles.title}>Browser Usage</span>
+        <span style={GlobalStyles.title}>Real time input</span>
 
         <div style={GlobalStyles.clear}/> {/* <canvas ref="canvas" style={styles.canvas} /> */}
         {/*important*/}
 
         {/* style={styles.canvas} */}
-        <canvas data-paper-resize width="640" height="480" ref={canvas => this.canvas = canvas}></canvas>
+        {/*  */}
+        <canvas data-paper-resize width="512" height="384"  ref={canvas => this.canvas = canvas}></canvas>
 
         {/* <div className="col-xs-12 col-sm-8 col-md-8 col-lg-8"> */}
 
