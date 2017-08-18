@@ -7,6 +7,7 @@ var Classes = models.Classes;
 var SubClass = models.SubClass;
 let Lectures = models.Lectures;
 var request = require('request');
+var mongoose = require('mongoose');
 
 //Manage DB Writes
 

@@ -9,6 +9,7 @@ var mongoose = require('mongoose');
 
 var MjpegCamera = require('mjpeg-camera');
 var FileOnWrite = require('file-on-write');
+var cameraRun = false;
 // var fs = require('fs');
 
 //  Create an MjpegCamera instance
@@ -184,6 +185,9 @@ function gmToBuffer(data) {
 
 io.on('connection', socket => {
   console.log("here");
+  if(cameraRun){
+    camera.stop();
+  }
 
   socket.on('test', data => {
     console.log(data.my);
@@ -259,7 +263,7 @@ var fileWriter = new FileOnWrite({
       //  console.log("base64data", base64data)
       // check for face in face set
       x++;
-      if (x % 10 === 0 && startImgAnalysis) {
+      if (x % 5 === 0 && startImgAnalysis) {
         // if (startImgAnalysis) {
         // console.log(x);
         request.post({
@@ -312,7 +316,7 @@ var fileWriter = new FileOnWrite({
                   JSON.parse(body).results.forEach((itemTmp,index) => {
                     console.log("face token is ", itemTmp.face_token);
                     console.log("confidence is ", itemTmp.confidence);
-                    if (itemTmp.confidence > 80) { //TODO: global number change to prototyp  __Ty_P_
+                    if (itemTmp.confidence > 77) { //TODO: global number change to prototyp  __Ty_P_
                       User.find({
                         "face_tokens": itemTmp.face_token
                       }, function(err, findTmp) {
@@ -331,6 +335,8 @@ var fileWriter = new FileOnWrite({
                                 console.log(lecture);
                                 console.log("im here")
                                 lecture.students.forEach((item)=>{
+                                  console.log("checking",item.student.toString());
+                                  console.log(findTmp[0]._id.toString());
                                   if(item.student.toString() === findTmp[0]._id.toString()){
                                     console.log("i found Benjamin change in db");
                                     item.attendance= 1;
@@ -415,6 +421,7 @@ camera.pipe(fileWriter);
 
 
        camera.start();
+       cameraRun=true;
 
 
       // camera.onFrame(function(err,data){
@@ -608,8 +615,7 @@ camera.pipe(fileWriter);
   socket.on('disconnect', () => {
     console.log("Client disconnect");
     camera.stop();
-
-
+    cameraRun =false;
   });
 
 });
