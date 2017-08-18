@@ -70,19 +70,27 @@ class App extends React.Component {
       console.log(error);
     });
 
-    var camSocket = io.connect("http://localhost:3000/cam0");
+    // var camSocket = io.connect("http://localhost:3000/cam0");
 
-    //deal with printing video
-    camSocket.on('data', (data) => {
-      // console.log(data);
-      this.setState({liveView: data});
-    });
+    // //deal with printing video
+    // camSocket.on('data', (data) => {
+    //   // console.log(data);
+    //   this.setState({liveView: data});
+    // });
 
     socket = io.connect("http://localhost:3000");
     socket.on('connect', () => {
       console.log("Connected!");
       // dispatch(AddItem(res))
     });
+
+    //deal with printing video
+    socket.on('data', (data) => {
+      // console.log(data);
+      this.setState({liveView: data});
+      console.log(data)
+    });
+
 
     socket.on('dataFace', (data) => {
       console.log("Connected!");

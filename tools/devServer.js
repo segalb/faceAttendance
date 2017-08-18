@@ -7,6 +7,14 @@ var bodyParser = require('body-parser');
 const gm = require('gm').subClass({imageMagick: true})
 var mongoose = require('mongoose');
 
+var MjpegCamera = require('mjpeg-camera');
+var FileOnWrite = require('file-on-write');
+// var fs = require('fs');
+
+//  Create an MjpegCamera instance
+var camera = new MjpegCamera({url: 'http://10.2.108.239:8081/video', motion: false});
+
+
 var connect = process.env.MONGODB_URI;
 
 global.API_URL = 'https://api-us.faceplusplus.com/facepp/v3/';
@@ -202,207 +210,404 @@ io.on('connection', socket => {
     //think of keeling the name space and use only the camera base on the specific socket
   });
 
+//**************
+              // var cams = ['rtsp://admin:b12345678@10.2.107.121:80/cam/realmonitor?channel=1&subtype=0'].map(function(uri, i) {
+              //   var stream = new rtsp.FFMpeg({input: uri, resolution: '640x480', quality: 3, rate: 25});
+              //   stream.on('start', function() {
+              //     console.log('stream ' + i + ' started');
+              //   });
+              //   stream.on('stop', function() {
+              //     console.log('stream ' + i + ' stopped');
+              //   });
+              //   return stream;
+              // });
+//*****************
 
-  var cams = ['rtsp://admin:b12345678@10.2.107.121:80/cam/realmonitor?channel=1&subtype=0'].map(function(uri, i) {
-    var stream = new rtsp.FFMpeg({input: uri, resolution: '640x480', quality: 3, rate: 25});
-    stream.on('start', function() {
-      console.log('stream ' + i + ' started');
-    });
-    stream.on('stop', function() {
-      console.log('stream ' + i + ' stopped');
-    });
-    return stream;
-  });
 
-  //demo
+  // cams.forEach(function(camStream, i) {
+    // var ns = io.of('/cam' + i);
+    // ns.on('connection', function(wsocket) {
+      // console.log('connected to /cam' + i);
+      // var pipeStream = function(data) {
+      //   wsocket.emit('data', data);
 
-  cams.forEach(function(camStream, i) {
-    var ns = io.of('/cam' + i);
-    ns.on('connection', function(wsocket) {
-      console.log('connected to /cam' + i);
-      var pipeStream = function(data) {
-        wsocket.emit('data', data);
-        //TODO: call to server all of this in a diffrent function
+      // Create a writable stream to generate files
+var fileWriter = new FileOnWrite({
+  path: './frames',
+  ext: '.jpeg',
+  filename: function(frame) {
+    return frame.name + '-' + frame.time;
+  },
+  transform: function(frame) {
+    // console.log(frame)
+    let data = frame.data;
+      // socket.emit('data', data);
 
-        // var d = gm(data, "data.jpg").resize('640', '480')
-        // gmToBuffer(d).then(function(buffer) {
-        //   //console.log(buffer);
-        //   wsocket.emit('data', buffer);
-        //
-        // })
+      //TODO: call to server all of this in a diffrent function
 
-        currentFrame = data;
+      // var d = gm(data, "data.jpg").resize('640', '480')
+      // gmToBuffer(d).then(function(buffer) {
+      //   //console.log(buffer);
+      //   wsocket.emit('data', buffer);
+      //
+      // })
 
-        var base64data = new Buffer(data).toString('base64');
+      currentFrame = data;
 
-        //  console.log("base64data", base64data)
-        // check for face in face set
-        x++;
-        if (x % 30 === 0 && startImgAnalysis) {
-          // if (startImgAnalysis) {
-          // console.log(x);
-          request.post({
-            url: API_URL + 'detect',
-            form: {
-              'api_key': API_KEY,
-              'api_secret': API_SECRET,
-              'return_landmark': "1",
-              'image_base64': base64data
-            }
-          }, function(error, response, body) {
-            console.log("got return");
-            facesArr = [];
-            // socket.emit('drawData', {
-            //   image: base64data,
-            //   body: body
-            // });
+      var base64data = new Buffer(data).toString('base64');
 
-            var tmp = JSON.parse(body);
-            console.log(tmp.faces);
+      //  console.log("base64data", base64data)
+      // check for face in face set
+      x++;
+      if (x % 10 === 0 && startImgAnalysis) {
+        // if (startImgAnalysis) {
+        // console.log(x);
+        request.post({
+          url: API_URL + 'detect',
+          form: {
+            'api_key': API_KEY,
+            'api_secret': API_SECRET,
+            'return_landmark': "1",
+            'image_base64': base64data
+          }
+        }, function(error, response, body) {
+          console.log("got return");
+          facesArr = [];
+          // socket.emit('drawData', {
+          //   image: base64data,
+          //   body: body
+          // });
 
-            if (tmp.faces) {
+          var tmp = JSON.parse(body);
+          console.log(tmp.faces);
 
-              tmp.faces.forEach((item, i) => {
-                facesArr.push({
-                  x0: item.face_rectangle.left,
-                  y0: item.face_rectangle.top,
-                  x1: (item.face_rectangle.left + item.face_rectangle.width),
-                  y1: (item.face_rectangle.top + item.face_rectangle.height)
-                });
+          if (tmp.faces) {
+
+            tmp.faces.forEach((item, i) => {
+              facesArr.push({
+                x0: item.face_rectangle.left,
+                y0: item.face_rectangle.top,
+                x1: (item.face_rectangle.left + item.face_rectangle.width),
+                y1: (item.face_rectangle.top + item.face_rectangle.height)
               });
-              tmp.faces.forEach((item, i) => {
+            });
+            tmp.faces.forEach((item, i) => {
 
-                console.log(item.face_token);
-                request.post({
-                  url: API_URL + 'search',
-                  form: {
-                    'api_key': API_KEY,
-                    'api_secret': API_SECRET,
-                    'face_token': item.face_token,
-                    'outer_id': API_KEY_FACESET_OUTRERID,
-                    'return_result_count': '1'
-                  }
-                }, function(error, response, body) {
-                  console.log("***************************");
-                  console.log("face searched");
-                  console.log("The face token is " + item.face_token)
-                  console.log('body', body);
-                  if (JSON.parse(body).results) {
-                    JSON.parse(body).results.forEach((itemTmp,index) => {
-                      console.log("face token is ", itemTmp.face_token);
-                      console.log("confidence is ", itemTmp.confidence);
-                      if (itemTmp.confidence > 80) { //TODO: global number change to prototyp  __Ty_P_
-                        User.find({
-                          "face_tokens": itemTmp.face_token
-                        }, function(err, findTmp) {
-                          if (findTmp.length < 1) {
-                            console.log("**************check this case some thing wrong there is a face in face set but not in db ******************")
-                          } else {
-                            console.log("find the student with the specific face token", findTmp)
-                            socket.emit('RegisteredFace', {person: findTmp});
+              console.log(item.face_token);
+              request.post({
+                url: API_URL + 'search',
+                form: {
+                  'api_key': API_KEY,
+                  'api_secret': API_SECRET,
+                  'face_token': item.face_token,
+                  'outer_id': API_KEY_FACESET_OUTRERID,
+                  'return_result_count': '1'
+                }
+              }, function(error, response, body) {
+                console.log("***************************");
+                console.log("face searched");
+                console.log("The face token is " + item.face_token)
+                console.log('body', body);
+                if (JSON.parse(body).results) {
+                  JSON.parse(body).results.forEach((itemTmp,index) => {
+                    console.log("face token is ", itemTmp.face_token);
+                    console.log("confidence is ", itemTmp.confidence);
+                    if (itemTmp.confidence > 80) { //TODO: global number change to prototyp  __Ty_P_
+                      User.find({
+                        "face_tokens": itemTmp.face_token
+                      }, function(err, findTmp) {
+                        if (findTmp.length < 1) {
+                          console.log("**************check this case some thing wrong there is a face in face set but not in db ******************")
+                        } else {
+                          console.log("find the student with the specific face token", findTmp)
+                          socket.emit('RegisteredFace', {person: findTmp});
 
-                            if(index === 0){
+                          if(index === 0){
 
-                              Lectures.findById(currentSubClassID, function(err,lecture){
-                                if(err){
-                                  console.log(err);
-                                }else{
-                                  console.log(lecture);
-                                  console.log("im here")
-                                  lecture.students.forEach((item)=>{
-                                    if(item.student.toString() === findTmp[0]._id.toString()){
-                                      console.log("i found Benjamin change in db");
-                                      item.attendance= 1;
-                                    }
-                                  });
-                                  lecture.markModified('array');
-                                lecture.save();
-                                }
-                              });
-                            }
-
-                          }
-                        });
-                      } else { //confidence is less then 80% new user
-                        console.log("confidence is less then 80% !!!!!!!!!!!!");
-                        console.log("user is not in db add him to non users", item.face_token);
-                        //TODO: add the avatar thing by croping the image to the specific size
-
-                        console.log(currentFrame);
-                        console.log("faces array is", facesArr);
-
-                        console.log(currentFrame);
-                        console.log("faces array is", facesArr);
-                        currentFrame = gm(data, 'image.jpg');
-                        facesArr.forEach((item, i) => {
-                          currentFrame.fill("none").stroke("blue", 7).drawRectangle(item.x0, item.y0, item.x1, item.y1)
-                          //     console.log(buffer);
-                          //     currentFrame = buffer;
-                          //     // var base64Suare = new Buffer(buffer).toString('base64');
-                          if (i === tmp.faces.length - 1) {
-                            currentFrame = currentFrame.resize(768, 432);
-                            gmToBuffer(currentFrame).then(function(buffer) {
-                              console.log("i, faces", i, tmp.faces.length);
-                              var base64Suare1 = buffer.toString('base64');
-                              socket.emit('dataFace', base64Suare1);
+                            Lectures.findById(currentSubClassID, function(err,lecture){
+                              if(err){
+                                console.log(err);
+                              }else{
+                                console.log(lecture);
+                                console.log("im here")
+                                lecture.students.forEach((item)=>{
+                                  if(item.student.toString() === findTmp[0]._id.toString()){
+                                    console.log("i found Benjamin change in db");
+                                    item.attendance= 1;
+                                  }
+                                });
+                                lecture.markModified('array');
+                              lecture.save();
+                              }
                             });
                           }
-                        });
 
-                        //super important small faces
-                        gm(data, 'image.jpg').crop((item.face_rectangle.width + 250), (item.face_rectangle.height + 250), (item.face_rectangle.left - 150), (item.face_rectangle.top - 200)).resize('150', '150').toBuffer('jpg', function(err, buffer) {
+                        }
+                      });
+                    } else { //confidence is less then 80% new user
+                      console.log("confidence is less then 80% !!!!!!!!!!!!");
+                      console.log("user is not in db add him to non users", item.face_token);
+                      //TODO: add the avatar thing by croping the image to the specific size
 
-                          var base64FaceSquare = buffer.toString('base64');
-                          socket.emit('unRegisteredFace', {
-                            face_token: item.face_token,
-                            faceAvatar: base64FaceSquare
+                      console.log(currentFrame);
+                      console.log("faces array is", facesArr);
+
+                      console.log(currentFrame);
+                      console.log("faces array is", facesArr);
+                      currentFrame = gm(data, 'image.jpg');
+                      facesArr.forEach((item, i) => {
+                        currentFrame.fill("none").stroke("blue", 7).drawRectangle(item.x0, item.y0, item.x1, item.y1)
+                        //     console.log(buffer);
+                        //     currentFrame = buffer;
+                        //     // var base64Suare = new Buffer(buffer).toString('base64');
+                        if (i === tmp.faces.length - 1) {
+                          currentFrame = currentFrame.resize(768, 432);
+                          gmToBuffer(currentFrame).then(function(buffer) {
+                            console.log("i, faces", i, tmp.faces.length);
+                            var base64Suare1 = buffer.toString('base64');
+                            socket.emit('dataFace', base64Suare1);
                           });
+                        }
+                      });
 
+                      //super important small faces
+                      gm(data, 'image.jpg').crop((item.face_rectangle.width + 250), (item.face_rectangle.height + 250), (item.face_rectangle.left - 150), (item.face_rectangle.top - 200)).resize('150', '150').toBuffer('jpg', function(err, buffer) {
+
+                        var base64FaceSquare = buffer.toString('base64');
+                        socket.emit('unRegisteredFace', {
+                          face_token: item.face_token,
+                          faceAvatar: base64FaceSquare
                         });
-                      }
-                    });
-                  }
 
-                });
+                      });
+                    }
+                  });
+                }
 
               });
 
-            } else { //check for errors
-              if (tmp.error_message === "CONCURRENCY_LIMIT_EXCEEDED") {
+            });
 
-                console.log("Too many Api calls", tmp.error_message);
-              } else {
-                console.log("issue with buffer");
-                // //super important log error image
-                // var fs = require('fs');
-                // // console.log(base64data)
-                // fs.writeFile('./camera/frames/camera-screenshot_' + Date.now() + '.jpg', data);
-                // // console.log("no faces");
-                // fs.writeFile('./camera/frames/camera-screenshot_' + Date.now() + '.txt', body);
-              }
+          } else { //check for errors
+            if (tmp.error_message === "CONCURRENCY_LIMIT_EXCEEDED") {
 
+              console.log("Too many Api calls", tmp.error_message);
+            } else {
+              console.log("issue with buffer");
+              // //super important log error image
+              // var fs = require('fs');
+              // // console.log(base64data)
+              // fs.writeFile('./camera/frames/camera-screenshot_' + Date.now() + '.jpg', data);
+              // // console.log("no faces");
+              // fs.writeFile('./camera/frames/camera-screenshot_' + Date.now() + '.txt', body);
             }
-          });
-        }
-      };
-      camStream.on('data', pipeStream);
 
-      wsocket.on('disconnect', function() {
-        console.log('disconnected from /cam' + i);
-        ns.removeAllListeners(); //ask jay if this the best way to do that -  https://stackoverflow.com/questions/26400595/socket-io-how-do-i-remove-a-namespace
-        //think of adding the socket on disconnect
-        console.log('I removed all listeners');
-        camStream.removeListener('data', pipeStream);
-      });
-    });
+          }
+        });
+      }
+
+    // camStream.on('data', pipeStream);
+    return frame.data;
+  }
+});
+
+camera.pipe(fileWriter);
 
 
-  });
+       camera.start();
+
+
+      // camera.onFrame(function(err,data){
+      //   console.log(data);
+      // })
+
+
+      // camera.getScreenshot(function(err, data) {
+      //   console.log(data);
+      //   socket.emit('data', data);
+      //
+      //   //TODO: call to server all of this in a diffrent function
+      //
+      //   // var d = gm(data, "data.jpg").resize('640', '480')
+      //   // gmToBuffer(d).then(function(buffer) {
+      //   //   //console.log(buffer);
+      //   //   wsocket.emit('data', buffer);
+      //   //
+      //   // })
+      //
+      //   currentFrame = data;
+      //
+      //   var base64data = new Buffer(data).toString('base64');
+      //
+      //   //  console.log("base64data", base64data)
+      //   // check for face in face set
+      //   x++;
+      //   if (x % 30 === 0 && startImgAnalysis) {
+      //     // if (startImgAnalysis) {
+      //     // console.log(x);
+      //     request.post({
+      //       url: API_URL + 'detect',
+      //       form: {
+      //         'api_key': API_KEY,
+      //         'api_secret': API_SECRET,
+      //         'return_landmark': "1",
+      //         'image_base64': base64data
+      //       }
+      //     }, function(error, response, body) {
+      //       console.log("got return");
+      //       facesArr = [];
+      //       // socket.emit('drawData', {
+      //       //   image: base64data,
+      //       //   body: body
+      //       // });
+      //
+      //       var tmp = JSON.parse(body);
+      //       console.log(tmp.faces);
+      //
+      //       if (tmp.faces) {
+      //
+      //         tmp.faces.forEach((item, i) => {
+      //           facesArr.push({
+      //             x0: item.face_rectangle.left,
+      //             y0: item.face_rectangle.top,
+      //             x1: (item.face_rectangle.left + item.face_rectangle.width),
+      //             y1: (item.face_rectangle.top + item.face_rectangle.height)
+      //           });
+      //         });
+      //         tmp.faces.forEach((item, i) => {
+      //
+      //           console.log(item.face_token);
+      //           request.post({
+      //             url: API_URL + 'search',
+      //             form: {
+      //               'api_key': API_KEY,
+      //               'api_secret': API_SECRET,
+      //               'face_token': item.face_token,
+      //               'outer_id': API_KEY_FACESET_OUTRERID,
+      //               'return_result_count': '1'
+      //             }
+      //           }, function(error, response, body) {
+      //             console.log("***************************");
+      //             console.log("face searched");
+      //             console.log("The face token is " + item.face_token)
+      //             console.log('body', body);
+      //             if (JSON.parse(body).results) {
+      //               JSON.parse(body).results.forEach((itemTmp,index) => {
+      //                 console.log("face token is ", itemTmp.face_token);
+      //                 console.log("confidence is ", itemTmp.confidence);
+      //                 if (itemTmp.confidence > 80) { //TODO: global number change to prototyp  __Ty_P_
+      //                   User.find({
+      //                     "face_tokens": itemTmp.face_token
+      //                   }, function(err, findTmp) {
+      //                     if (findTmp.length < 1) {
+      //                       console.log("**************check this case some thing wrong there is a face in face set but not in db ******************")
+      //                     } else {
+      //                       console.log("find the student with the specific face token", findTmp)
+      //                       socket.emit('RegisteredFace', {person: findTmp});
+      //
+      //                       if(index === 0){
+      //
+      //                         Lectures.findById(currentSubClassID, function(err,lecture){
+      //                           if(err){
+      //                             console.log(err);
+      //                           }else{
+      //                             console.log(lecture);
+      //                             console.log("im here")
+      //                             lecture.students.forEach((item)=>{
+      //                               if(item.student.toString() === findTmp[0]._id.toString()){
+      //                                 console.log("i found Benjamin change in db");
+      //                                 item.attendance= 1;
+      //                               }
+      //                             });
+      //                             lecture.markModified('array');
+      //                           lecture.save();
+      //                           }
+      //                         });
+      //                       }
+      //
+      //                     }
+      //                   });
+      //                 } else { //confidence is less then 80% new user
+      //                   console.log("confidence is less then 80% !!!!!!!!!!!!");
+      //                   console.log("user is not in db add him to non users", item.face_token);
+      //                   //TODO: add the avatar thing by croping the image to the specific size
+      //
+      //                   console.log(currentFrame);
+      //                   console.log("faces array is", facesArr);
+      //
+      //                   console.log(currentFrame);
+      //                   console.log("faces array is", facesArr);
+      //                   currentFrame = gm(data, 'image.jpg');
+      //                   facesArr.forEach((item, i) => {
+      //                     currentFrame.fill("none").stroke("blue", 7).drawRectangle(item.x0, item.y0, item.x1, item.y1)
+      //                     //     console.log(buffer);
+      //                     //     currentFrame = buffer;
+      //                     //     // var base64Suare = new Buffer(buffer).toString('base64');
+      //                     if (i === tmp.faces.length - 1) {
+      //                       currentFrame = currentFrame.resize(768, 432);
+      //                       gmToBuffer(currentFrame).then(function(buffer) {
+      //                         console.log("i, faces", i, tmp.faces.length);
+      //                         var base64Suare1 = buffer.toString('base64');
+      //                         socket.emit('dataFace', base64Suare1);
+      //                       });
+      //                     }
+      //                   });
+      //
+      //                   //super important small faces
+      //                   gm(data, 'image.jpg').crop((item.face_rectangle.width + 250), (item.face_rectangle.height + 250), (item.face_rectangle.left - 150), (item.face_rectangle.top - 200)).resize('150', '150').toBuffer('jpg', function(err, buffer) {
+      //
+      //                     var base64FaceSquare = buffer.toString('base64');
+      //                     socket.emit('unRegisteredFace', {
+      //                       face_token: item.face_token,
+      //                       faceAvatar: base64FaceSquare
+      //                     });
+      //
+      //                   });
+      //                 }
+      //               });
+      //             }
+      //
+      //           });
+      //
+      //         });
+      //
+      //       } else { //check for errors
+      //         if (tmp.error_message === "CONCURRENCY_LIMIT_EXCEEDED") {
+      //
+      //           console.log("Too many Api calls", tmp.error_message);
+      //         } else {
+      //           console.log("issue with buffer");
+      //           // //super important log error image
+      //           // var fs = require('fs');
+      //           // // console.log(base64data)
+      //           // fs.writeFile('./camera/frames/camera-screenshot_' + Date.now() + '.jpg', data);
+      //           // // console.log("no faces");
+      //           // fs.writeFile('./camera/frames/camera-screenshot_' + Date.now() + '.txt', body);
+      //         }
+      //
+      //       }
+      //     });
+      //   }
+      // });
+      // camStream.on('data', pipeStream);
+
+      // wsocket.on('disconnect', function() {
+      //   console.log('disconnected from /cam' + i);
+      //   ns.removeAllListeners(); //ask jay if this the best way to do that -  https://stackoverflow.com/questions/26400595/socket-io-how-do-i-remove-a-namespace
+      //   //think of adding the socket on disconnect
+      //   console.log('I removed all listeners');
+      //   camStream.removeListener('data', pipeStream);
+      // });
+    // });
+
+
+  // });
 
   //
 
   socket.on('disconnect', () => {
     console.log("Client disconnect");
+    camera.stop();
 
 
   });

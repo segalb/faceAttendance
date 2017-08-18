@@ -17,7 +17,7 @@ class RealTimeVideoContainer extends React.Component {
 
   componentDidMount() {
     //  canvas = this.cnvas ReactDOM.findDOMNode(this.refs.myCanvas);
-    ctx = this.canvas.getContext('2d');
+    // ctx = this.canvas.getContext('2d');
     // ctx.fillStyle = 'rgb(200,0,0)';
     // ctx.fillRect(10, 10, 55, 50);
     // ctx.fillRect(0, 0, 100, 100);
@@ -29,29 +29,29 @@ class RealTimeVideoContainer extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     //console.log("I got new props")
-    if (this.props.info !== "null") {
-
-      var bytes = new Uint8Array(this.props.info);
-
-      var blob = new Blob([bytes], {type: 'application/octet-binary'});
-
-      var url = URL.createObjectURL(blob);
-
-      var img = new Image;
-
-      img.onload = function() {
-        // console.log(img.width);
-        // console.log(img.height)
-        URL.revokeObjectURL(url);
-
-        // ctx.drawImage(img, 0, 0, 1280, 720, 0, 0, 640, 480);
-          // ctx.drawImage(img, 0, 0, 1280, 960, 0, 0, 512, 384);
-              ctx.drawImage(img, 0, 0, 640, 480, 0, 0, 512, 384);
-        // ctx.drawImage(img, 0, 0);
-
-      };
-      img.src = url;
-    }
+    // if (this.props.info !== "null") {
+    //
+    //   var bytes = new Uint8Array(this.props.info);
+    //
+    //   var blob = new Blob([bytes], {type: 'application/octet-binary'});
+    //
+    //   var url = URL.createObjectURL(blob);
+    //
+    //   var img = new Image;
+    //
+    //   img.onload = function() {
+    //     // console.log(img.width);
+    //     // console.log(img.height)
+    //     URL.revokeObjectURL(url);
+    //
+    //     // ctx.drawImage(img, 0, 0, 1280, 720, 0, 0, 640, 480);
+    //       // ctx.drawImage(img, 0, 0, 1280, 960, 0, 0, 512, 384);
+    //           ctx.drawImage(img, 0, 0, 640, 480, 0, 0, 512, 384);
+    //     // ctx.drawImage(img, 0, 0);
+    //
+    //   };
+    //   img.src = url;
+    // }
   }
 
   render() {
@@ -75,7 +75,7 @@ class RealTimeVideoContainer extends React.Component {
         minHeight: "460",
         minWidth: "560",
       },
-      liveStream: {
+      img: {
         width: "100%"
       }
     };
@@ -89,7 +89,9 @@ class RealTimeVideoContainer extends React.Component {
 
         {/* style={styles.canvas} */}
         {/*  */}
-        <canvas data-paper-resize width="512" height="384"  ref={canvas => this.canvas = canvas}></canvas>
+        {/* <canvas data-paper-resize width="512" height="384"  ref={canvas => this.canvas = canvas}></canvas> */}
+        {/* <img src={this.state.img}/> */}
+      <img width="540" height="400" src="http://10.2.108.239:8081/video"/>
 
         {/* <div className="col-xs-12 col-sm-8 col-md-8 col-lg-8"> */}
 
