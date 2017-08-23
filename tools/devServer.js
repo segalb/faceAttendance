@@ -13,7 +13,7 @@ var cameraRun = false;
 // var fs = require('fs');
 
 //  Create an MjpegCamera instance
-var camera = new MjpegCamera({url: 'http://10.2.108.239:8081/video', motion: false});
+var camera = new MjpegCamera({url: 'http://10.0.0.2:8081/video', motion: false});
 
 
 var connect = process.env.MONGODB_URI;

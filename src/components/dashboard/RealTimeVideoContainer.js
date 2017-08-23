@@ -91,7 +91,7 @@ class RealTimeVideoContainer extends React.Component {
         {/*  */}
         {/* <canvas data-paper-resize width="512" height="384"  ref={canvas => this.canvas = canvas}></canvas> */}
         {/* <img src={this.state.img}/> */}
-      <img width="540" height="400" src="http://10.2.108.239:8081/video"/>
+      <img width="540" height="400" src="http://10.0.0.2:8081/video"/>
 
         {/* <div className="col-xs-12 col-sm-8 col-md-8 col-lg-8"> */}
 
