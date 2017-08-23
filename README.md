@@ -1,15 +1,30 @@
 # Tend - take attendance based on face detection
 
-## Lists and Keys
+## Product
 
-### [Watch Me](https://vimeo.com/223236338)
+### [Live explanation](https://vimeo.com/223236338)
 
+1. Tend is a system that soppused to make professor life easier when taking attendance for classes. Tend builds a reporpt per lecture and summary for the all semester ```per student```. in the future the system will find a corelation between students that attend classes and students that noramllay are missing classes and thier grades.
 
-1. Display array ```groceries``` as a list just like the picture. Use classes ```GroceryItem``` and ```ShoppingCart``` in a way that makes sense; use the item names as keys.
-
-	Use Codepen [here](https://codepen.io/rick-shar/pen/xdeQxQ)
+2. Here is the work flow of the system and some photos from a live Demo.
 
 	![](./img/lists-1.png)
+
+
+###Todo
+
+- [ ] Mercury
+- [x] Venus
+- [x] Earth (Orbit/Moon)
+- [x] Mars
+- [ ] Jupiter
+- [ ] Saturn
+- [ ] Uranus
+- [ ] Neptune
+- [ ] Comet Haley
+
+
+
 
 1. Display array ```roster``` as a nested list, as in the picture. Use the provided classes in a way that makes sense - make sure that you use keys for both mappings, and that the keys are unique!
 
