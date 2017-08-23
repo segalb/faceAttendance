@@ -8,20 +8,19 @@
 
 2. Here is the work flow of the system and some photos from a live Demo.
 
-	![Main Screen](./readmeImg/main.jpg)
+### [Main Screen](./readmeImg/main.jpg)
 
-  ![Mains screen - unrecognized faces and users in class](./readmeImg/main2.jpg)
+###  [Mains screen - unrecognized faces and users in class](./readmeImg/main2.jpg)
 
-  ![Professor can always add new classes](./readmeImg/add_Class.jpg)
+###  [Professor can always add new classes](./readmeImg/add_Class.jpg)
 
-  ![Attendance Per Lecture View](./readmeImg/attendance_Per_Lecture.jpg)
+###  [Attendance Per Lecture View](./readmeImg/attendance_Per_Lecture.jpg)
 
+###  [Attendance per lecture students list](./readmeImg/Attendance_Per_Lecture_Students_List.jpg)
 
-  ![Attendance per lecture students list](./readmeImg/Attendance_Per_Lecture_Students_List.jpg)
+###  [Semester summary per student](./readmeImg/Semester_summary_per_student.jpg)
 
-  ![Semester summary per student](./readmeImg/Semester_summary_per_student.jpg)
-
-  ![Semester summary per student - Lecture analysis](./readmeImg/Semester_summary_per_student_analysis.jpg)
+###  [Semester summary per student - Lecture analysis](./readmeImg/Semester_summary_per_student_analysis.jpg)
 
 
 ###Todo
