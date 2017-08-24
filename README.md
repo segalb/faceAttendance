@@ -8,11 +8,11 @@
 
 2. Here is the work flow of the system and some photos from a live Demo.
 
-###
-
  <details>
  <summary>Main Screen  </summary>
+
   ![](./readmeImg/main.jpg)
+
  </details>
 
 ### Main screen - unrecognized faces and users in class
